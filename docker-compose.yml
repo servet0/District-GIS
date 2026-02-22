@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  # ── PostgreSQL + PostGIS ──────────────────────────────────────
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: geokarar-db
+    env_file: .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U geokarar -d geokarar"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Python ETL Service ────────────────────────────────────────
+  python-etl:
+    build: ./python-etl
+    container_name: geokarar-etl
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./python-etl/data:/app/data
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ── Spring Boot API ───────────────────────────────────────────
+  api:
+    build: ./api
+    container_name: geokarar-api
+    env_file: .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ── Next.js Frontend ──────────────────────────────────────────
+  frontend:
+    build: ./frontend
+    container_name: geokarar-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080/api
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

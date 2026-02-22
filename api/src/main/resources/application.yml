@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: geokarar-api
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/geokarar}
+    username: ${SPRING_DATASOURCE_USERNAME:geokarar}
+    password: ${SPRING_DATASOURCE_PASSWORD:geokarar_secret}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.spatial.dialect.postgis.PostgisPG10Dialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
