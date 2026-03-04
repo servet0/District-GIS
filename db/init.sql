@@ -7,7 +7,7 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 
 -- Districts table
 CREATE TABLE IF NOT EXISTS districts (
-    id              SERIAL PRIMARY KEY,
+    id              BIGSERIAL PRIMARY KEY,
     district_name   TEXT NOT NULL,
     city_name       TEXT NOT NULL,
     population      INTEGER,

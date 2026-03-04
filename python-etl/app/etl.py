@@ -60,6 +60,7 @@ def _make_point_geometry(lat: float, lng: float) -> str:
 
     In production this would be replaced by actual district boundary
     polygons from a shapefile.
+    Returns WKT string for use with ST_GeomFromText.
     """
     offset = 0.05  # ~5 km bounding box
     poly = Polygon([
@@ -69,7 +70,7 @@ def _make_point_geometry(lat: float, lng: float) -> str:
         (lng - offset, lat + offset),
         (lng - offset, lat - offset),
     ])
-    return from_shape(MultiPolygon([poly]), srid=4326)
+    return MultiPolygon([poly]).wkt
 
 
 def run_etl() -> int:
@@ -99,7 +100,7 @@ def run_etl() -> int:
                     VALUES
                         (:district_name, :city_name, :population,
                          :income, :education, :infrastructure, :employment,
-                         :development_index, :geom)
+                         :development_index, ST_GeomFromText(:geom, 4326))
                 """),
                 {
                     "district_name": row["district_name"],
