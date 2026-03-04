@@ -176,7 +176,7 @@ District-GIS/
 ### Step 1 — Clone and Configure
 
 ```bash
-git clone https://github.com/your-username/District-GIS.git
+git clone https://github.com/servet0/District-GIS.git 
 cd District-GIS
 cp .env.example .env        # Create your local .env and update credentials
 docker compose up -d --build
